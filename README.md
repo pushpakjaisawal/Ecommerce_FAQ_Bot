@@ -1,6 +1,5 @@
-
 # 🛒 E-Commerce FAQ Bot — Agentic AI Customer Support
-Demo link: https://ecommercefaqbotsupport.streamlit.app/
+
 <div align="center">
 
 ![Python](https://img.shields.io/badge/Python-3.10%2B-blue?style=for-the-badge&logo=python)
@@ -17,7 +16,7 @@ Demo link: https://ecommercefaqbotsupport.streamlit.app/
 </div>
 
 ---
-
+Demo link: https://ecommercefaqbotsupport.streamlit.app/
 ## 📋 Table of Contents
 
 - [Overview](#overview)
@@ -424,4 +423,3 @@ This project is licensed under the **MIT License**.
 Star this repo if you found it helpful!
 
 </div>
-

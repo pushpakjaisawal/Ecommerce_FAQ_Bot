@@ -362,15 +362,49 @@ class CapstoneState(TypedDict):
 #         temperature = 0.1,                # Low temperature → factual, deterministic answers
 #         max_tokens  = 512,
 #     )
+# THIS IS THE NEW VERSION — replace the old get_llm() with this
 def get_llm():
     """
     Factory that returns the configured ChatGroq LLM instance.
-    Model updated from llama3-8b-8192 (decommissioned) to llama-3.3-70b-versatile.
+
+    API Key Loading Priority:
+      1. Streamlit secrets  → used when deployed on Streamlit Cloud
+      2. .env file          → used when running locally in VS Code
+      3. Environment var    → fallback (set via terminal export/set command)
+
+    This dual-loading approach means the SAME code works both
+    locally (VS Code) and in production (Streamlit Cloud) without
+    any changes between environments.
     """
+    import os
+
+    # ── Try Streamlit secrets first (Streamlit Cloud deployment) ─────────
+    # st.secrets reads from the Secrets panel in Streamlit Cloud dashboard
+    # If running locally, this block raises an exception → caught below
+    api_key = ""
+    try:
+        import streamlit as st
+        api_key = st.secrets["GROQ_API_KEY"]
+    except Exception:
+        # ── Fall back to .env file (local VS Code development) ────────────
+        # load_dotenv() reads your local .env file automatically
+        from dotenv import load_dotenv
+        load_dotenv()
+        api_key = os.getenv("GROQ_API_KEY", "")
+
+    # ── Safety check — crash early with a clear message if key missing ────
+    if not api_key:
+        raise ValueError(
+            "GROQ_API_KEY not found!\n"
+            "Local:  Add GROQ_API_KEY=gsk_... to your .env file\n"
+            "Cloud:  Add GROQ_API_KEY in Streamlit Cloud → App Settings → Secrets"
+        )
+
     return ChatGroq(
-        model       = "llama-3.3-70b-versatile",  # ✅ active model as of 2025
+        model       = "llama-3.3-70b-versatile",
         temperature = 0.1,
-        max_tokens  = 512,
+        max_tokens  = 256,
+        api_key     = api_key,         # ← explicitly passed, never relies on env
     )
 
 # ── NODE 1: memory_node ──────────────────────────────────────────────────────
